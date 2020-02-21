@@ -1,21 +1,33 @@
 import * as imaps from 'imap-simple';
-import { ImapConfigurationInterface } from '../interfaces/imapConfigInterface';
-import { resolve } from 'dns';
-import { rejects } from 'assert';
-
+import Storage from './storage'
+import { ImapConfigurationInterface, emailMessageFormatInterface } from '../interfaces/imapConfigInterface';
 
 export class Mail {
+
+  private static instance: Mail | null;
   private connection: any;
   public searchCriteria: any[];
   public fetchOptions: object;
   private rawMessages: any;
   public folder: any;
   public config: any;
-  constructor(config: ImapConfigurationInterface, folder: string = "INBOX") {
+  private storage: Storage;
+  constructor() {
+    this.storage = Storage.getInstance();
+  }
+
+  static getInstance() {
+    if (!this.instance) {
+      this.instance = new Mail();
+    }
+    return this.instance;
+  }
+
+  setConfig(config: ImapConfigurationInterface, folder: string = "INBOX") {
     this.folder = folder;
+    this.config = config;
     this.setFetchOptions();
     this.setSearchCriteria();
-    this.config = config;
   }
 
   async connect() {
@@ -39,52 +51,50 @@ export class Mail {
     this.rawMessages = await this.connection.search(this.searchCriteria, this.fetchOptions);
   }
 
-  processMessage() {
+  async processMessage() {
     const self = this;
 
-    const messages = []
-    this.rawMessages.map(function (message, i) {
-      let content = new Promise(async (resolve, reject) => {
-        let emailMessage = {
-          header: '',
-          bodyText: '',
-          bodyHTML: '',
-          attachment: []
-        }
-        const header = message.parts.filter(function (part) {
-          return part.which === 'HEADER.FIELDS (TO FROM SUBJECT)';
-        });
-        emailMessage.header = header[0].body
-
-        const data = await self.getParts(message, emailMessage);
-        resolve(data);
+    let messages = [];
+    for (let i = 0; i < this.rawMessages.length; i++) {
+      const message = this.rawMessages[i];
+      let emailMessage: emailMessageFormatInterface = {
+        header: {},
+        bodyText: '',
+        bodyHTML: '',
+        attachment: []
+      }
+      const header = message.parts.filter(function (part: any) {
+        return part.which === 'HEADER.FIELDS (TO FROM SUBJECT)';
       });
-      messages.push(content);
-    })
-
-    return Promise.all(messages);
+      emailMessage.header = header[0].body
+      const data: any = await self.getParts(message, emailMessage);
+      messages.push(data);
+    }
+    return messages;
 
   }
 
-  async getParts(message, emailMessage) {
+  async getParts(message: any, emailMessage: emailMessageFormatInterface) {
 
     const self = this;
     const parts = await imaps.getParts(message.attributes.struct);
-    const data = [];
-    parts.map(async (part, i) => {
-      data.push(new Promise(async (res, reject) => {
-        const partData = await self.connection.getPartData(message, part);
-        if (i == 0) {
-          emailMessage.bodyText = partData
-        } else if (i == 1) {
-          emailMessage.bodyHTML = partData
-        } else {
-          emailMessage.attachment.push(partData);
-        }
-        res(emailMessage)
-      }));
-    });
-    return Promise.all(data);
+    const data: any = [];
+
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i];
+      const partData = await self.connection.getPartData(message, part);
+      if (i == 0) {
+        emailMessage.bodyText = partData
+      } else if (i == 1) {
+        emailMessage.bodyHTML = partData
+      } else {
+        const location: string = await this.storage.saveAttachment(partData, part.params.name);
+        console.log(this.storage.getStatus())
+        emailMessage.attachment.push(location);
+      }
+    }
+
+    return emailMessage;
   }
 
 

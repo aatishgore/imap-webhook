@@ -9,3 +9,10 @@ interface EmailConfigurationInterface {
   tls: boolean,
   authTimeout?: number
 }
+
+export interface emailMessageFormatInterface {
+  header: object,
+  bodyText: string,
+  bodyHTML: string,
+  attachment: any[]
+}

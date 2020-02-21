@@ -4,6 +4,7 @@
   "description": "This package is used to catch email which are not delivered to any address",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec 'ts-node' index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
@@ -12,15 +13,22 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/axios": "^0.14.0",
     "@types/imap-simple": "^4.2.2",
     "@types/logger": "0.0.0",
+    "axios": "^0.19.2",
     "dotenv": "^8.2.0",
+    "googleapis": "^39.2.0",
     "html-to-text": "^5.1.1",
+    "http": "0.0.0",
     "imap-simple": "^4.3.0",
     "prompt": "^1.0.0",
+    "querystring": "^0.2.0",
     "request": "^2.88.2"
   },
   "devDependencies": {
-    "@types/node": "^13.7.1"
+    "@types/node": "^13.7.1",
+    "tsc": "^1.20150623.0",
+    "tsc-watch": "^4.1.0"
   }
 }

@@ -76,3 +76,7 @@ typings/
 
 # VS Code
 .vscode/settings.json
+
+
+credentials.json
+token.json

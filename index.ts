@@ -1,9 +1,8 @@
-import * as imaps from 'imap-simple';
-import * as request from 'request';
-import * as fs from 'fs';
+
 import * as dotenv from "dotenv";
 import { ImapConfigurationInterface } from './interfaces/imapConfigInterface';
 import { Mail } from './classes/mail'
+import Webhook from "./classes/webhook";
 dotenv.config();
 
 var config: ImapConfigurationInterface = {
@@ -15,14 +14,22 @@ var config: ImapConfigurationInterface = {
     tls: process.env.tls === 'true' ? true : false,
   }
 };
-const mail = new Mail(config);
 
+const mail = Mail.getInstance();
+const webhook = Webhook.getInstance();
+webhook.setWebhookUrl(process.env.webhookUrl);
+mail.setConfig(config);
 const getMail = async () => {
 
   const mailData = await mail.connect();
-  console.log(mailData);
+  webhook.triggerWebhook(mailData);
 }
 getMail();
+
+
+
+
+
 // imaps.connect(config).then(function (connection: any) {
 
 //   connection.openBox('INBOX').then(function () {
