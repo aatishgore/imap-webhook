@@ -57,6 +57,13 @@ const properties = [
     name: "attachment",
     default: __dirname,
     before: value => (value.substr(-1) === "/" ? value : value + "/")
+  },
+  {
+    description: "FIle server url",
+    required: true,
+    name: "fileServerUrl",
+    validator: urlRegex,
+    default: "http://43.240.67.252/attachments/"
   }
 ];
 

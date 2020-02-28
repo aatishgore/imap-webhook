@@ -108,7 +108,7 @@ export class Mail {
         emailMessage.bodyHTML = partData
       } else {
         const location: string = await this.storage.saveAttachment(partData, part.params.name);
-        emailMessage.attachment.push(location);
+        emailMessage.attachment.push(process.env.fileServerUrl + '' + location);
       }
     }
 
