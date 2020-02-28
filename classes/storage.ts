@@ -4,7 +4,7 @@ import { errorMessage } from '../interfaces/storageInterface';
 
 export default class Storage {
   private static instance: Storage | null;
-  private fileLocation = './attachment/';
+  private fileLocation: string = './attachment/';
   private status: errorMessage | undefined = undefined
   static getInstance() {
     if (!this.instance) {
@@ -12,14 +12,14 @@ export default class Storage {
     }
     return this.instance;
   }
-  setFileLocation(location) {
+  setFileLocation(location: string) {
     this.fileLocation = location;
   }
 
   getStatus() {
     return this.status;
   }
-  saveAttachment(attachment: object | undefined = undefined, fileName = undefined) {
+  saveAttachment(attachment: object | undefined = undefined, fileName: string | undefined = undefined) {
     if (attachment === undefined || fileName === undefined) {
       this.status = {
         status: false,

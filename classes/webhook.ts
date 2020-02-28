@@ -1,6 +1,4 @@
 
-var querystring = require('querystring');
-var request = require('request');
 import axios from 'axios';
 import config from '../config/index';
 

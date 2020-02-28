@@ -1,6 +1,5 @@
 
 import * as dotenv from "dotenv";
-import { ImapConfigurationInterface } from './interfaces/imapConfigInterface';
 import { Mail } from './classes/mail'
 import Webhook from "./classes/webhook";
 import cron = require('cron');

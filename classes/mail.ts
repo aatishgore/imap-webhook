@@ -99,8 +99,6 @@ export class Mail {
 
     const self = this;
     const parts = await imaps.getParts(message.attributes.struct);
-    const data: any = [];
-
     for (let i = 0; i < parts.length; i++) {
       const part = parts[i];
       const partData = await self.connection.getPartData(message, part);
