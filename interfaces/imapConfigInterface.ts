@@ -1,5 +1,6 @@
 export interface ImapConfigurationInterface {
   imap: EmailConfigurationInterface
+  onmail: Function
 }
 interface EmailConfigurationInterface {
   user: string,

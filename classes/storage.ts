@@ -38,7 +38,6 @@ export default class Storage {
           }
         }
         else {
-          console.log('successfully');
           this.status = {
             status: true,
             message: "Attachment copied successfully"

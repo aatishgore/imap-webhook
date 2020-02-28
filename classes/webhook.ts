@@ -2,6 +2,8 @@
 var querystring = require('querystring');
 var request = require('request');
 import axios from 'axios';
+import config from '../config/index';
+
 export default class Webhook {
   private static instance: Webhook | null;
   public webhookUrl: string | undefined = undefined
@@ -19,7 +21,7 @@ export default class Webhook {
 
     axios.post(this.webhookUrl, data)
       .then((res) => {
-        console.log(res)
+        console.log(config.consoleMsg.message("Webhook Triggered.....💣 💣 💣 💣 💣 💣 💣 "));
       })
       .catch((error) => {
         console.error(error)

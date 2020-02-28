@@ -49,7 +49,14 @@ const properties = [
     required: true,
     name: "webhookUrl",
     validator: urlRegex,
-    default: "http://abc.com"
+    default: "https://webhook.site/58b9ed2e-f683-4960-9e93-f05c487773e9"
+  },
+  {
+    description: "Enter storage file path",
+    required: true,
+    name: "attachment",
+    default: __dirname,
+    before: value => (value.substr(-1) === "/" ? value : value + "/")
   }
 ];
 
@@ -61,16 +68,15 @@ prompt.get(properties, function(err, result) {
   }
   fs.unlink("./.env", function(err) {
     // if no error, file has been deleted successfully
-    console.log("File deleted!");
+    console.log("Deleting previous .env file");
   });
-  console.log("Command-line input received:");
+
   for (var key in result) {
     fs.appendFile("./.env", `${key}=${result[key]}\n`, function(err) {
       if (err) throw err;
-      console.log("Saved!");
     });
-    console.log(`${key}=${result[key]}`);
   }
+  console.log("Generated new .env file");
 });
 
 function onErr(err) {

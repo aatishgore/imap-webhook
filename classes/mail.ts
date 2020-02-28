@@ -1,6 +1,7 @@
 import * as imaps from 'imap-simple';
 import Storage from './storage'
 import { ImapConfigurationInterface, emailMessageFormatInterface } from '../interfaces/imapConfigInterface';
+import config from '../config/index';
 
 export class Mail {
 
@@ -10,10 +11,20 @@ export class Mail {
   public fetchOptions: object;
   private rawMessages: any;
   public folder: any;
-  public config: any;
+  public config: any = {
+    imap: {
+      user: process.env.email,
+      password: process.env.password,
+      host: process.env.host,
+      port: parseInt(process.env.port),
+      tls: process.env.tls === 'true' ? true : false,
+    }
+  };
   private storage: Storage;
   constructor() {
     this.storage = Storage.getInstance();
+    this.setFetchOptions();
+    this.setSearchCriteria();
   }
 
   static getInstance() {
@@ -26,24 +37,34 @@ export class Mail {
   setConfig(config: ImapConfigurationInterface, folder: string = "INBOX") {
     this.folder = folder;
     this.config = config;
-    this.setFetchOptions();
-    this.setSearchCriteria();
+
   }
+
 
   async connect() {
     try {
-      this.connection = await imaps.connect(this.config)
+      console.log(config.consoleMsg.message("Connecting imap server.....🏃 🏃 🏃 🏃 🏃 🏃 "));
+
+      this.connection = await imaps.connect(this.config);
+      console.log(config.consoleMsg.message("Opening InBox....📬 📬 📬 📬 📬 📬"));
       await this.openInBox(this.folder);
+      console.log(config.consoleMsg.message("Parsing Email....📥 📥 📥 📥 📥"));
       const attachments: any = await this.processMessage();
       return attachments;
     } catch (e) {
       throw (e)
     }
   }
+
+  close() {
+    console.log(config.consoleMsg.message("Closing imap server.....📪 📪 📪 📪 📪 📪 📪"));
+
+    this.connection.end();
+  }
   setSearchCriteria(options: any[] = ['UNSEEN']) {
     this.searchCriteria = options;
   }
-  setFetchOptions(options: object = { bodies: ['HEADER.FIELDS (TO FROM SUBJECT)', 'TEXT'], struct: true, markSeen: false }) {
+  setFetchOptions(options: object = { bodies: ['HEADER.FIELDS (TO FROM SUBJECT)', 'TEXT'], struct: true, markSeen: true }) {
     this.fetchOptions = options;
   }
   async openInBox(folder: string = 'INBOX') {
@@ -89,7 +110,6 @@ export class Mail {
         emailMessage.bodyHTML = partData
       } else {
         const location: string = await this.storage.saveAttachment(partData, part.params.name);
-        console.log(this.storage.getStatus())
         emailMessage.attachment.push(location);
       }
     }
