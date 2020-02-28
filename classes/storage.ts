@@ -46,7 +46,7 @@ export default class Storage {
           }
         }
       });
-      return fileName;
+      return newFileName;
     } catch (e) {
       throw e
     }
