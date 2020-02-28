@@ -27,7 +27,9 @@ export default class Storage {
       }
       return "";
     }
-    const location = `${this.fileLocation}${fileName}`;
+    const date: number = new Date().valueOf();
+    const newFileName = `${date}${fileName}`;
+    const location = `${this.fileLocation}${newFileName}`;
     try {
       fs.writeFile(location, attachment, error => {
         if (error) {
@@ -44,7 +46,7 @@ export default class Storage {
           }
         }
       });
-      return location;
+      return fileName;
     } catch (e) {
       throw e
     }

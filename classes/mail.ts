@@ -99,13 +99,19 @@ export class Mail {
 
     const self = this;
     const parts = await imaps.getParts(message.attributes.struct);
+    console.log(parts.length);
     for (let i = 0; i < parts.length; i++) {
       const part = parts[i];
       const partData = await self.connection.getPartData(message, part);
       if (i == 0) {
         emailMessage.bodyText = partData
       } else if (i == 1) {
-        emailMessage.bodyHTML = partData
+        if (typeof partData === 'string')
+          emailMessage.bodyHTML = partData
+        else {
+          const location: string = await this.storage.saveAttachment(partData, part.params.name);
+          emailMessage.attachment.push(process.env.fileServerUrl + '' + location);
+        }
       } else {
         const location: string = await this.storage.saveAttachment(partData, part.params.name);
         emailMessage.attachment.push(process.env.fileServerUrl + '' + location);
