@@ -4,7 +4,12 @@ import { Mail } from './classes/mail'
 import Webhook from "./classes/webhook";
 import cron = require('cron');
 import consoleMsg from './config/index';
+import * as express from 'express'
 dotenv.config();
+const app: express.Application = express();
+app.use(express.static('attachment'))
+
+
 
 const mail = Mail.getInstance();
 const webhook = Webhook.getInstance();
@@ -28,6 +33,9 @@ var job = new CronJob('0 */1 * * * *', async () => {
 
 }, null, true, 'America/Los_Angeles');
 job.start();
+app.listen(3000, function () {
+  console.log('App is listening on port 3000!');
+});
 
 
 

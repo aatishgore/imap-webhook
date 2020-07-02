@@ -55,7 +55,7 @@ const properties = [
     description: "Enter storage file path",
     required: true,
     name: "attachment",
-    default: __dirname,
+    default: "attachment",
     before: value => (value.substr(-1) === "/" ? value : value + "/")
   },
   {

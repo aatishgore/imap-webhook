@@ -4,7 +4,7 @@ import { errorMessage } from '../interfaces/storageInterface';
 
 export default class Storage {
   private static instance: Storage | null;
-  private fileLocation: string = process.env.attachment;
+  private fileLocation: string = process.env.workingDir + process.env.attachment;
   private status: errorMessage | undefined = undefined
   static getInstance() {
     if (!this.instance) {
