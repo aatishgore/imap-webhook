@@ -105,16 +105,13 @@ export class Mail {
       const partData = await self.connection.getPartData(message, part);
       if (i == 0) {
         emailMessage.bodyText = partData
-      } else if (i == 1) {
+      } else {
         if (typeof partData === 'string')
           emailMessage.bodyHTML = partData
         else {
           const location: string = await this.storage.saveAttachment(partData, part.params.name);
           emailMessage.attachment.push(process.env.fileServerUrl + '' + location);
         }
-      } else {
-        const location: string = await this.storage.saveAttachment(partData, part.params.name);
-        emailMessage.attachment.push(process.env.fileServerUrl + '' + location);
       }
     }
 
